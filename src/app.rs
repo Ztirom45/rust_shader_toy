@@ -38,14 +38,36 @@ impl App{
     /*unsafe{  
       ogl33::glEnable(ogl33::GL_TEXTURE_2D);
     }*/
+    //creat mesh
+    
+    type Vertex = [f32; 3];
+    const VERTICES: [Vertex; 3] =
+    [[-0.5, -0.5, 0.0], [0.5, -0.5, 0.0], [0.0, 0.5, 0.0]];
     unsafe{ 
       load_gl_with(|f_name| win.get_proc_address(f_name as *const u8));
       let mut vao = 0;
       glGenVertexArrays(1, &mut vao);
       assert_ne!(vao, 0);
-      glVertexAttrib1f(0, 0.0); 
+      
+      let mut vbo = 0;
+      glGenBuffers(1, &mut vbo);
+      assert_ne!(vbo, 0);
+      glBindBuffer(GL_ARRAY_BUFFER, vbo);
+      glBufferData(
+        GL_ARRAY_BUFFER,
+        size_of_val(&VERTICES) as isize,
+        VERTICES.as_ptr().cast(),
+        GL_STATIC_DRAW,
+      );
+      glVertexAttribPointer(
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        size_of::<Vertex>().try_into().unwrap(),
+        0 as *const _,
+      );
       glEnableVertexAttribArray(0);
-      glBindVertexArray(vao);
     }
     let shader = Shader::new(&win);
     return Self{
@@ -78,7 +100,8 @@ impl App{
   }*/
   pub fn draw(&mut self){
     unsafe{
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+      glDrawArrays(GL_TRIANGLES, 0, 3);
+      //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
   }
   pub fn update(&mut self){ 

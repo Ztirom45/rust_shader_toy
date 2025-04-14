@@ -1,12 +1,19 @@
 use beryllium::video::GlWindow;
 use ogl33::*;
+const VERT_SHADER: &str = r#"#version 330 core
+  layout (location = 0) in vec3 pos;
+  void main() {
+    gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+  }
+"#;
+/*
 const VERT_SHADER: &str = r#"#version 420 core
 const vec2 quadVertices[4] = { vec2(-1.0, -1.0), vec2(1.0, -1.0), vec2(-1.0, 1.0), vec2(1.0, 1.0) };
 void main()
 {
     gl_Position = vec4(quadVertices[gl_VertexID], 0.0, 1.0);
 } "#;
-
+*/
 const FRAG_SHADER: &str = r#"#version 430 core
   out vec4 final_color;
 
