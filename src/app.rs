@@ -40,13 +40,21 @@ impl App{
       win
     };
   }
-  pub fn update(&mut self){ 
+  pub fn pre_draw(&mut self){
     unsafe {
       load_gl_with(|f_name| self.win.get_proc_address(f_name as *const u8));
       glClearColor(0.2, 0.3, 0.3, 1.0);
       glClear(GL_COLOR_BUFFER_BIT);
     }
 
+  }
+
+  pub fn draw(&mut self){
+
+  }
+  pub fn update(&mut self){ 
+    self.pre_draw();
+    self.draw();
     self.win.swap_window();   
   }
 }
