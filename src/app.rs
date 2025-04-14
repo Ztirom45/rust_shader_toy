@@ -1,13 +1,16 @@
 use beryllium::{init::InitFlags, video::GlWindow, *};
+
 use ogl33::*;
+use crate::shader::*;
 
 pub struct App{
   pub sdl:Sdl,
   pub win:GlWindow,
+  pub shader:Shader,
 }
 
 impl App{
-  pub fn new() -> App{
+  pub fn new() -> Self{
     let sdl = Sdl::init(InitFlags::EVERYTHING);
 
     sdl.set_gl_context_major_version(3).unwrap();
@@ -35,11 +38,24 @@ impl App{
     /*unsafe{  
       ogl33::glEnable(ogl33::GL_TEXTURE_2D);
     }*/
-    return App{
+    unsafe{ 
+      load_gl_with(|f_name| win.get_proc_address(f_name as *const u8));
+      let mut vao = 0;
+      glGenVertexArrays(1, &mut vao);
+      assert_ne!(vao, 0);
+      glVertexAttrib1f(0, 0.0); 
+      glEnableVertexAttribArray(0);
+      glBindVertexArray(vao);
+    }
+    let shader = Shader::new(&win);
+    return Self{
       sdl,
-      win
+      win,
+      shader
     };
   }
+
+
   pub fn pre_draw(&mut self){
     unsafe {
       load_gl_with(|f_name| self.win.get_proc_address(f_name as *const u8));
@@ -47,14 +63,31 @@ impl App{
       glClear(GL_COLOR_BUFFER_BIT);
     }
 
+  }/*
+  pub unsafe fn  print_cstring(&self,data: *const u8){//just for debugging realy buggy don't use
+    println!("{}",std::str::from_utf8_unchecked(std::slice::from_raw_parts(data, 40)));
   }
-
+  pub fn get_info(&self){//just for debugging realy buggy don't use
+    unsafe{
+      load_gl_with(|f_name| self.win.get_proc_address(f_name as *const u8));
+      self.print_cstring(glGetString(GL_VENDOR));
+      self.print_cstring(glGetString(GL_RENDERER));
+      self.print_cstring(glGetString(GL_VERSION));
+      self.print_cstring(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    }		
+  }*/
   pub fn draw(&mut self){
-
+    unsafe{
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
   }
   pub fn update(&mut self){ 
     self.pre_draw();
     self.draw();
     self.win.swap_window();   
+  }
+
+  pub fn clear(&mut self){
+    self.shader.clear(&self.win);
   }
 }
