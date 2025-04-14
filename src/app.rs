@@ -33,11 +33,20 @@ impl App{
       .create_gl_window(win_args)
       .expect("couldn't make a window and context");
     /*unsafe{  
-      glEnable(GL_TEXTURE_2D);
+      ogl33::glEnable(ogl33::GL_TEXTURE_2D);
     }*/
     return App{
       sdl,
       win
     };
+  }
+  pub fn update(&mut self){ 
+    unsafe {
+      load_gl_with(|f_name| self.win.get_proc_address(f_name as *const u8));
+      glClearColor(0.2, 0.3, 0.3, 1.0);
+      glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    self.win.swap_window();   
   }
 }
