@@ -39,29 +39,29 @@ float sdBox(vec3 p, vec3 b){
         );
 }
 
+
 float map(vec3 p){
-	vec3 spherePos = vec3(sin(iTime)*3.,0,0);
-	float sphere = sdSphere(p-spherePos, 1.);
-
-
-	float boxScale = 0.2;
-
-	vec3 q = p;
-	q.y -= iTime;
-	q = fract(q) - .5;
-	q.xy*=rot2d(iTime);
-	q.yz*=rot2d(iTime);
-
-
-	float box = sdBox(q/boxScale, vec3(.75))*boxScale;
-	box = max(-sdBox(p, vec3(3)),box);
-
-	float ground = p.y + .75;
-
-	return min(ground , smin(box,sphere,1.)); //distance to sphere
-	return length(p)-1;
-	//return sqrt(p.x*p.x+p.y*p.y+p.z*p.z)-1;
+    vec3 spherePos = vec3(sin(iTime)*3.,0,0);
+    float sphere = sdSphere(p-spherePos, 1.);
+    float obj = max(sphere,sdBox(p-spherePos,vec3(0.7)));
+    
+    float boxScale = 0.2;
+   
+    vec3 q = p;
+    q.y -= iTime;
+    q = fract(q) - .5;
+    q.xy*=rot2d(iTime);
+    q.yz*=rot2d(iTime);
+    
+    
+    float box = sdBox(q/boxScale, vec3(.75))*boxScale;
+    box = max(-sdBox(p, vec3(3)),box);
+    
+    float ground = p.y + .75;
+    
+    return min(ground , smin(box,obj,1.)); //distance to sphere
 }
+
 
 void main() {
 		
