@@ -9,7 +9,7 @@ a tool to execute glsl localy fragment shader like shader toy
 - make sure to install sdl and ogl on your system
 
 ## shader inputs
-```
+```glsl.fs
 in fragCoord //pixel position
 
 uniform vec2 iResolution; // resolution of the viewport

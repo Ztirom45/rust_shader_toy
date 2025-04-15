@@ -176,7 +176,6 @@ impl App{
               y_delta: _ }, _) => {
                 self.i_mouse.x = x_win;
                 self.i_mouse.y = y_win;
-                println!("{} {}",self.i_mouse.x,self.i_mouse.y);
               
               },
             _ => (),
