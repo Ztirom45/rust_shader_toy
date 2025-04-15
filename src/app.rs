@@ -1,4 +1,4 @@
-use std::ffi::CString;
+use std::{ffi::CString, time::Instant};
 
 use beryllium::{init::InitFlags, video::GlWindow, *};
 
@@ -9,6 +9,7 @@ pub struct App{
   pub sdl:Sdl,
   pub win:GlWindow,
   pub shader_program:u32,
+  pub start_time:Instant,
 }
 
  
@@ -66,14 +67,14 @@ impl App{
       sdl,
       win,
       shader_program,
+      start_time:Instant::now(),
     };
   }
 
   pub unsafe fn update_uniforms(&mut self){
+        //update iResolution
         let i_resolution = self.win.get_window_size();
-        println!("{} {}",i_resolution.0,i_resolution.1);
         
-        //update viewport
         glViewport(0, 0, i_resolution.0*2, i_resolution.1*2);
         
         let i_resolution_location = glGetUniformLocation(
@@ -83,9 +84,35 @@ impl App{
 	if i_resolution_location>=0{
 		glUniform2f(i_resolution_location,i_resolution.0 as f32,i_resolution.1 as f32);
 	}else{
-		panic!("error: couldn't find view uniform\n");
-		//exit(EXIT_FAILURE);
+		println!("error: couldn't find iResolution uniform. maybe not used\n");
 	}
+        
+        //update iTime
+        let i_time:f32 = self.start_time.elapsed().as_secs_f32();
+        let i_time_location = glGetUniformLocation(
+        self.shader_program,
+        CString::new("iTime").unwrap().as_ptr() as *const i8
+        );
+        
+	if i_time_location>=0{
+		glUniform1f(i_time_location,i_time);
+	}else{
+		println!("error: couldn't find iTime uniform. maybe unused\n");
+	}
+
+
+        //update iMouse
+        let i_mouse_location = glGetUniformLocation(
+        self.shader_program,
+        CString::new("iMouse").unwrap().as_ptr() as *const i8
+        );
+        
+	if i_mouse_location>=0{
+		//glUniform4f(i_mouse_location,);
+	}else{
+		println!("error: couldn't find iMouse uniform. maybe unused\n");
+	}
+
    
   }
   pub fn pre_draw(&mut self){
