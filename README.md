@@ -18,3 +18,6 @@ uniform vec4 iMouse; //[0:2] mouse pixel coords, TODO: [2:4] left & right click
 
 out vec4 final_color //pixel output color
 ```
+
+## run
+`cargo run`
