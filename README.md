@@ -10,11 +10,11 @@ a tool to execute glsl localy fragment shader like shader toy
 
 ## shader inputs
 ```
-in fragCoord
+in fragCoord //pixel position
 
 uniform vec2 iResolution; // resolution of the viewport
 uniform float iTime; //time since the program has started
 uniform vec4 iMouse; //[0:2] mouse pixel coords, TODO: [2:4] left & right click 
 
-out vec4 final_color
+out vec4 final_color //pixel output color
 ```
