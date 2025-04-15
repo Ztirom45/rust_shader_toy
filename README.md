@@ -1,8 +1,12 @@
 # rust_shader_toy
-a tool to execute glsl fragment shader like shader toy
+a tool to execute glsl localy fragment shader like shader toy
 
 ## intention
 - this tool was written to run this [raymarching shader](https://www.shadertoy.com/view/tXSGzW) localy
+
+## stack
+- this tool is based on berrilium (sdl bindings for rust) and ogl33
+- make sure to install sdl and ogl on your system
 
 ## shader inputs
 ```
