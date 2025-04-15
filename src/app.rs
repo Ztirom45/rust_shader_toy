@@ -3,13 +3,23 @@ use std::{ffi::CString, time::Instant};
 use beryllium::{init::InitFlags, video::GlWindow, *};
 
 use ogl33::*;
-use crate::shader::{self, *};
+use crate::shader::*;
+
+//Warning: left_button and right button updates are not implemented yet
+pub struct MouseState{
+  pub x:i32,
+  pub y:i32,
+  pub left_button:bool,
+  pub right_button:bool,
+}
 
 pub struct App{
   pub sdl:Sdl,
   pub win:GlWindow,
   pub shader_program:u32,
   pub start_time:Instant,
+  pub is_running:bool,
+  pub i_mouse:MouseState,
 }
 
  
@@ -68,13 +78,17 @@ impl App{
       win,
       shader_program,
       start_time:Instant::now(),
+      is_running:true,
+      i_mouse:MouseState { x: 0, y: 0, left_button: false, right_button: false }
     };
   }
 
-  pub unsafe fn update_uniforms(&mut self){
+  pub  fn update_uniforms(&mut self){
         //update iResolution
-        let i_resolution = self.win.get_window_size();
         
+        let i_resolution = self.win.get_window_size();
+        unsafe{ 
+        load_gl_with(|f_name| self.win.get_proc_address(f_name as *const u8));
         glViewport(0, 0, i_resolution.0*2, i_resolution.1*2);
         
         let i_resolution_location = glGetUniformLocation(
@@ -108,17 +122,23 @@ impl App{
         );
         
 	if i_mouse_location>=0{
-		//glUniform4f(i_mouse_location,);
+		glUniform4f(
+                  i_mouse_location,
+                  self.i_mouse.x as f32,
+                  self.i_mouse.y as f32,
+                  self.i_mouse.left_button as i32 as f32,
+                  self.i_mouse.right_button as i32 as f32
+                );
 	}else{
 		println!("error: couldn't find iMouse uniform. maybe unused\n");
 	}
+        }
 
    
   }
   pub fn pre_draw(&mut self){
     unsafe {
       load_gl_with(|f_name| self.win.get_proc_address(f_name as *const u8));
-      self.update_uniforms();
       //glClearColor(0.2, 0.3, 0.3, 1.0);
       glClear(GL_COLOR_BUFFER_BIT);
     }
@@ -141,12 +161,46 @@ impl App{
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
   }
+
+  pub fn handle_events(&mut self){
+      while let Some(event) = self.sdl.poll_events() {
+        match event {
+            (events::Event::Quit, _) => self.is_running = false,
+            (events::Event::MouseMotion{
+              win_id: _, 
+              mouse_id: _, 
+              button_state: _,
+              x_win,
+              y_win, 
+              x_delta: _, 
+              y_delta: _ }, _) => {
+                self.i_mouse.x = x_win;
+                self.i_mouse.y = y_win;
+                println!("{} {}",self.i_mouse.x,self.i_mouse.y);
+              
+              },
+            _ => (),
+        }
+      }
+
+      //let x = events.mouse_state().x1();
+  }
+
   pub fn update(&mut self){ 
+    self.handle_events();
+    self.update_uniforms();
+
     self.pre_draw();
     self.draw();
     self.win.swap_window();
   }
 
+  pub fn run(&mut self){
+    while self.is_running{
+      self.update();
+    }
+  self.clear(); 
+  }
   pub fn clear(&mut self){
     //self.shader.clear(&self.win);
   }
