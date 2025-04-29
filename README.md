@@ -2,7 +2,7 @@
 a tool to execute glsl localy fragment shader like shader toy
 
 ## intention
-- this tool was written to run this [raymarching shader](https://www.shadertoy.com/view/tXSGzW) localy
+- this tool was written to run this [raymarching shader](https://www.shadertoy.com/view/W32XRD) localy
 
 ## stack
 - this tool is based on berrylium (sdl bindings for rust) and ogl33
